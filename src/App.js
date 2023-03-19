@@ -3,12 +3,13 @@ import { Block } from "./Block";
 import "./index.scss";
 
 function App() {
-  const [fromCurrency, setFromCurrency] = React.useState("USD");
-  const [toCurrency, setToCurrency] = React.useState("UAH");
+  const [fromCurrency, setFromCurrency] = React.useState("UAH");
+  const [toCurrency, setToCurrency] = React.useState("USD");
   const [fromPrice, setFromPrice] = React.useState(0);
   const [toPrice, setToPrice] = React.useState(1);
-  const [rates, setRates] = React.useState({});
 
+  // const [rates, setRates] = React.useState({});
+  const ratesRef = React.useRef({});
   // React.useEffect(() => {
   //   fetch("https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json")
   //     .then((res) => res.json())
@@ -26,10 +27,14 @@ function App() {
     fetch("https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json")
       .then((res) => res.json())
       .then((json) => {
-        setRates(
-          json.reduce((obj, item) => ({ ...obj, [item.cc]: item.rate }), {})
+        // setRates(
+        //   json.reduce((obj, item) => ({ ...obj, [item.cc]: item.rate }), {})
+        // );
+        ratesRef.current = json.reduce(
+          (obj, item) => ({ ...obj, [item.cc]: item.rate }),
+          {}
         );
-
+        onChangeToPrice(1);
         // console.log(json);
       })
       .catch((err) => {
@@ -46,12 +51,12 @@ function App() {
   // };
 
   const onChangeFromPrice = (value) => {
-    const rateFrom = rates[toCurrency] || 1;
-    const rateTo = rates[fromCurrency] || 1;
+    const rateFrom = ratesRef.current[toCurrency] || 1;
+    const rateTo = ratesRef.current[fromCurrency] || 1;
     const price = value / rateFrom;
     const result = price * rateTo;
     setFromPrice(value);
-    setToPrice(isNaN(result) ? 0 : result);
+    setToPrice(isNaN(result) ? 0 : result.toFixed(3));
   };
 
   // const onChangeToPrice = (value) => {
@@ -59,11 +64,11 @@ function App() {
   // };
 
   const onChangeToPrice = (value) => {
-    const rateFrom = rates[toCurrency] || 1;
-    const rateTo = rates[fromCurrency] || 1;
+    const rateFrom = ratesRef.current[toCurrency] || 1;
+    const rateTo = ratesRef.current[fromCurrency] || 1;
     const price = value / rateTo;
     const result = price * rateFrom;
-    setFromPrice(isNaN(result) ? 0 : result);
+    setFromPrice(isNaN(result) ? 0 : result.toFixed(3));
     setToPrice(value);
   };
 
