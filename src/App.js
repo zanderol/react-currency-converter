@@ -1,6 +1,7 @@
 import React from "react";
 import { Block } from "./Block";
 import "./index.scss";
+import "./currency-exchange.png";
 
 function App() {
   const [fromCurrency, setFromCurrency] = React.useState("UAH");
