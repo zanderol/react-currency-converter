@@ -88,6 +88,7 @@ function App() {
         onChangeCurrency={setFromCurrency}
         onChangeValue={onChangeFromPrice}
       />
+
       <Block
         value={toPrice}
         currency={toCurrency}
